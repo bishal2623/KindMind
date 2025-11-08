@@ -11,7 +11,7 @@
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 import {googleAI} from '@genkit-ai/google-genai';
-import wav from 'wav';
+
 
 const SignLanguageTranslationInputSchema = z.object({
   videoDataUri: z
@@ -57,6 +57,34 @@ Respond in JSON format with the translatedText and confidenceScore fields.
 `,
 });
 
+async function toWav(
+  pcmData: Buffer,
+  channels = 1,
+  rate = 24000,
+  sampleWidth = 2
+): Promise<string> {
+  const wav = await import('wav');
+  return new Promise((resolve, reject) => {
+    const writer = new wav.Writer({
+      channels,
+      sampleRate: rate,
+      bitDepth: sampleWidth * 8,
+    });
+
+    let bufs = [] as any[];
+    writer.on('error', reject);
+    writer.on('data', function (d) {
+      bufs.push(d);
+    });
+    writer.on('end', function () {
+      resolve(Buffer.concat(bufs).toString('base64'));
+    });
+
+    writer.write(pcmData);
+    writer.end();
+  });
+}
+
 async function textToSpeech(text: string): Promise<string> {
   const {media} = await ai.generate({
     model: googleAI.model('gemini-2.5-flash-preview-tts'),
@@ -78,33 +106,6 @@ async function textToSpeech(text: string): Promise<string> {
     'base64'
   );
   return 'data:audio/wav;base64,' + (await toWav(audioBuffer));
-}
-
-async function toWav(
-  pcmData: Buffer,
-  channels = 1,
-  rate = 24000,
-  sampleWidth = 2
-): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const writer = new wav.Writer({
-      channels,
-      sampleRate: rate,
-      bitDepth: sampleWidth * 8,
-    });
-
-    let bufs = [] as any[];
-    writer.on('error', reject);
-    writer.on('data', function (d) {
-      bufs.push(d);
-    });
-    writer.on('end', function () {
-      resolve(Buffer.concat(bufs).toString('base64'));
-    });
-
-    writer.write(pcmData);
-    writer.end();
-  });
 }
 
 const translateSignLanguageFlow = ai.defineFlow(
