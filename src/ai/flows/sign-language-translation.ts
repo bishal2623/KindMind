@@ -1,0 +1,154 @@
+'use server';
+
+/**
+ * @fileOverview Translates sign language video to text and speech.
+ *
+ * - translateSignLanguage - A function that translates sign language video to text and speech.
+ * - SignLanguageTranslationInput - The input type for the translateSignLanguage function.
+ * - SignLanguageTranslationOutput - The return type for the translateSignLanguage function.
+ */
+
+import {ai} from '@/ai/genkit';
+import {z} from 'genkit';
+import {googleAI} from '@genkit-ai/google-genai';
+import wav from 'wav';
+
+const SignLanguageTranslationInputSchema = z.object({
+  videoDataUri: z
+    .string()
+    .describe(
+      "A video of sign language, as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'."
+    ),
+});
+export type SignLanguageTranslationInput = z.infer<typeof SignLanguageTranslationInputSchema>;
+
+const SignLanguageTranslationOutputSchema = z.object({
+  translatedText: z.string().describe('The translated text of the sign language video.'),
+  translatedSpeechUri: z
+    .string()
+    .describe('The data URI containing the speech output of the translated text.'),
+  confidenceScore: z
+    .number()
+    .describe('A score indicating the confidence of the translation, from 0 to 1.'),
+});
+export type SignLanguageTranslationOutput = z.infer<typeof SignLanguageTranslationOutputSchema>;
+
+export async function translateSignLanguage(
+  input: SignLanguageTranslationInput
+): Promise<SignLanguageTranslationOutput> {
+  return translateSignLanguageFlow(input);
+}
+
+const translateSignLanguagePrompt = ai.definePrompt({
+  name: 'translateSignLanguagePrompt',
+  input: {schema: SignLanguageTranslationInputSchema},
+  output: {schema: z.object({translatedText: z.string(), confidenceScore: z.number()})},
+  prompt: `You are an expert sign language translator.
+
+You will receive a video of sign language and provide an accurate text translation, along with a confidence score indicating the accuracy of the translation.
+
+Video: {{media url=videoDataUri}}
+
+Respond in JSON format with the translatedText and confidenceScore fields.
+{
+  "translatedText": "The translated text",
+  "confidenceScore": 0.95
+}
+`,
+});
+
+const translateTextToSpeechPrompt = ai.definePrompt({
+  name: 'translateTextToSpeechPrompt',
+  input: {schema: z.object({text: z.string()})},
+  output: {schema: z.object({speechUri: z.string()})},
+  prompt: `You are an expert at generating kind, supportive speech.
+
+You will receive text and create an audio version of the text that captures the kind and supportive nature of the text.
+
+Text: {{{text}}}
+
+Respond in JSON format with the speechUri containing a data URI of the speech output.
+{
+  "speechUri": "data:audio/wav;base64,..."
+}
+`,
+});
+
+async function textToSpeech(text: string): Promise<string> {
+  const {media} = await ai.generate({
+    model: googleAI.model('gemini-2.5-flash-preview-tts'),
+    config: {
+      responseModalities: ['AUDIO'],
+      speechConfig: {
+        voiceConfig: {
+          prebuiltVoiceConfig: {voiceName: 'Algenib'},
+        },
+      },
+    },
+    prompt: text,
+  });
+  if (!media) {
+    throw new Error('no media returned');
+  }
+  const audioBuffer = Buffer.from(
+    media.url.substring(media.url.indexOf(',') + 1),
+    'base64'
+  );
+  return 'data:audio/wav;base64,' + (await toWav(audioBuffer));
+}
+
+async function toWav(
+  pcmData: Buffer,
+  channels = 1,
+  rate = 24000,
+  sampleWidth = 2
+): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const writer = new wav.Writer({
+      channels,
+      sampleRate: rate,
+      bitDepth: sampleWidth * 8,
+    });
+
+    let bufs = [] as any[];
+    writer.on('error', reject);
+    writer.on('data', function (d) {
+      bufs.push(d);
+    });
+    writer.on('end', function () {
+      resolve(Buffer.concat(bufs).toString('base64'));
+    });
+
+    writer.write(pcmData);
+    writer.end();
+  });
+}
+
+const translateSignLanguageFlow = ai.defineFlow(
+  {
+    name: 'translateSignLanguageFlow',
+    inputSchema: SignLanguageTranslationInputSchema,
+    outputSchema: SignLanguageTranslationOutputSchema,
+  },
+  async input => {
+    const {output: translationOutput} = await translateSignLanguagePrompt(input);
+
+    if (!translationOutput) {
+      throw new Error('Failed to translate sign language.');
+    }
+
+    const {output: speechOutput} = await translateTextToSpeechPrompt({
+      text: translationOutput.translatedText,
+    });
+
+    if (!speechOutput) {
+      throw new Error('Failed to generate speech from text.');
+    }
+
+    return {
+      translatedText: translationOutput.translatedText,
+      translatedSpeechUri: speechOutput.speechUri,
+      confidenceScore: translationOutput.confidenceScore,
+    };
+  }
+);

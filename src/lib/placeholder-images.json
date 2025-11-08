@@ -1,3 +1,28 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "sign-language",
+      "description": "Two hands forming a heart shape, representing communication and care.",
+      "imageUrl": "https://images.unsplash.com/photo-1629916318676-4b6f77aa4f6d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxoYW5kcyUyMGhlYXJ0fGVufDB8fHx8MTc2MjU4MzExOHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "hands heart"
+    },
+    {
+      "id": "ai-companion",
+      "description": "A person is comforted by a friendly robot, symbolizing empathetic AI support.",
+      "imageUrl": "https://images.unsplash.com/photo-1507146153580-69a1fe6d8aa1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxodW1hbiUyMHJvYm90fGVufDB8fHx8MTc2MjU4MzExOHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "human robot"
+    },
+    {
+      "id": "journaling",
+      "description": "An open journal with a pen, set against a calm, serene background.",
+      "imageUrl": "https://images.unsplash.com/photo-1622993361017-180360aea82c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxqb3VybmFsJTIwd3JpdGluZ3xlbnwwfHx8fDE3NjI1MDM1NjV8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "journal writing"
+    },
+    {
+      "id": "login-hero",
+      "description": "A diverse group of people connecting and communicating.",
+      "imageUrl": "https://images.unsplash.com/photo-1492462543947-040389c4a66c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxkaXZlcnNlJTIwcGVvcGxlfGVufDB8fHx8MTc2MjU4MzExOHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "diverse people"
+    }
+  ]
 }
