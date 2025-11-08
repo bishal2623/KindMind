@@ -18,8 +18,7 @@ const EmpatheticAICompanionInputSchema = z.object({
 export type EmpatheticAICompanionInput = z.infer<typeof EmpatheticAICompanionInputSchema>;
 
 const EmpatheticAICompanionOutputSchema = z.object({
-  sentimentScore: z.number().describe('The sentiment score of the user input.'),
-  suggestedActions: z.array(z.string()).describe('The suggested actions for the user based on the sentiment.'),
+  response: z.string().describe("The AI's empathetic response to the user."),
 });
 export type EmpatheticAICompanionOutput = z.infer<typeof EmpatheticAICompanionOutputSchema>;
 
@@ -27,52 +26,60 @@ export async function empatheticAICompanion(input: EmpatheticAICompanionInput): 
   return empatheticAICompanionFlow(input);
 }
 
-const getSuggestedActionsTool = ai.defineTool(
-    {
-        name: 'getSuggestedActions',
-        description: 'Get suggested actions based on sentiment score.',
-        inputSchema: z.object({ sentimentScore: z.number() }),
-        outputSchema: z.array(z.string()),
-    },
-    async ({sentimentScore}) => {
-        if (sentimentScore > 0.5) {
-            return ['Continue with your day', 'Share your positivity with others'];
-        } else if (sentimentScore < -0.5) {
-            return ['Take a break and relax', 'Talk to a friend or family member'];
-        } else {
-            return ['Reflect on your day', 'Practice mindfulness'];
-        }
-    }
-);
-
 const empatheticAICompanionFlow = ai.defineFlow(
   {
     name: 'empatheticAICompanionFlow',
     inputSchema: EmpatheticAICompanionInputSchema,
     outputSchema: EmpatheticAICompanionOutputSchema,
-    tools: [getSuggestedActionsTool]
   },
   async input => {
-    const sentimentScore = await analyzeSentiment(input.userInput) as MoodScore;
-    
-    const llmResponse = await ai.generate({
-        prompt: `You are an empathetic AI companion designed to provide support and suggestions to users based on their input. Analyze the user input and provide a sentiment score and suggested actions. User Input: ${input.userInput}`,
+    const { text } = await ai.generate({
+        system: `You are an empathetic AI companion designed for Deaf users. 
+You communicate in clear, simple, friendly text. 
+You never say you cannot respond, you never show technical errors, and you never say you are having trouble. 
+If a user expresses sadness, stress, or emotional discomfort, respond with care and understanding.
+
+Your responses should always:
+- Start with empathy (e.g., "I’m sorry you feel this way" / "That sounds really hard")
+- Ask how you can help
+- Be supportive and kind
+- Use short, clear sentences (easy to read)
+- Avoid long paragraphs
+- Never sound robotic
+- Never refuse to answer unless the message is unsafe
+- NEVER say "I can't respond", "I'm having trouble", "Try again later", or similar.
+
+Example correct tone:
+User: "I am not feeling well"
+AI: "I’m really sorry to hear that. That must feel difficult. I’m here for you. How can I help you feel a little better?"
+
+🔧 Optional: If user feels sad, use this reply structure
+
+Empathy
+
+Direct support question
+
+Short comforting line
+
+Example:
+
+"I’m really sorry you’re feeling low today.
+That sounds tough.
+Do you want to tell me what’s bothering you, or should I try to cheer you up?"
+`,
+        prompt: `User message: "${input.userInput}"`,
         model: 'googleai/gemini-2.5-flash',
-        tools: [getSuggestedActionsTool],
-        toolChoice: 'required',
+        config: {
+          temperature: 0.7,
+        },
+        output: {
+            format: 'text',
+            schema: z.string().max(150)
+        }
     });
 
-    const toolRequest = llmResponse.toolRequest();
-
-    if (!toolRequest) {
-        throw new Error('Expected a tool request to get suggested actions.');
-    }
-    
-    const toolResponse = await toolRequest.run();
-
     return {
-      sentimentScore,
-      suggestedActions: toolResponse as string[],
+      response: text,
     };
   }
 );

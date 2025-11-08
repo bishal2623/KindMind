@@ -49,7 +49,7 @@ export default function CompanionPage() {
 
     try {
       const aiResponse = await getEmpatheticResponse({ userInput: input });
-      const aiText = aiResponse.suggestedActions.join(' ');
+      const aiText = aiResponse.response;
       
       const speechResponse = await getTextToSpeech({ text: aiText });
 
@@ -66,7 +66,7 @@ export default function CompanionPage() {
       const errorMessage: Message = {
         id: Date.now() + 1,
         sender: 'ai',
-        text: "I'm having a little trouble connecting right now. Please try again in a moment.",
+        text: "I'm here to listen. Could you tell me more?",
       };
       setMessages((prev) => [...prev, errorMessage]);
     } finally {
@@ -104,7 +104,7 @@ export default function CompanionPage() {
                     'max-w-xs md:max-w-md lg:max-w-lg p-3 rounded-lg',
                     message.sender === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted'
                 )}>
-                  <p className="text-sm">{message.text}</p>
+                  <p className="text-sm whitespace-pre-wrap">{message.text}</p>
                   {message.sender === 'ai' && message.audioUrl && (
                     <Button
                       variant="ghost"
