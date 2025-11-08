@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { getSignLanguageTranslation } from '@/app/actions';
-import { Video, Mic, Loader2, Circle, Square, Volume2, Info, CheckCircle, Smile, HelpCircle, Frown } from 'lucide-react';
+import { Video, Mic, Loader2, Circle, Square, Volume2, HelpCircle, Frown, Smile, CameraOff } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -35,28 +35,33 @@ export default function SignLanguagePage() {
   const [translationState, setTranslationState] = useState<TranslationState>('idle');
   const [result, setResult] = useState<TranslationResult | null>(null);
   const [stream, setStream] = useState<MediaStream | null>(null);
+  const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
 
-  const setupCamera = async () => {
-    try {
-      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+  useEffect(() => {
+    const getCameraPermission = async () => {
+      try {
         const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+        setHasCameraPermission(true);
+        setStream(stream);
+
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
         }
-        setStream(stream);
-      } else {
-        toast({ title: 'Camera not supported', description: 'Your browser does not support camera access.', variant: 'destructive' });
+      } catch (error) {
+        console.error('Error accessing camera:', error);
+        setHasCameraPermission(false);
+        toast({
+          variant: 'destructive',
+          title: 'Camera Access Denied',
+          description: 'Please enable camera permissions in your browser settings to use this feature.',
+        });
       }
-    } catch (err) {
-      toast({ title: 'Camera access denied', description: 'Please allow camera access in your browser settings.', variant: 'destructive' });
-      console.error(err);
-    }
-  };
+    };
 
-  useEffect(() => {
-    setupCamera();
+    getCameraPermission();
+    
     return () => {
-      stream?.getTracks().forEach(track => track.stop());
+        stream?.getTracks().forEach(track => track.stop());
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -67,7 +72,15 @@ export default function SignLanguagePage() {
       return;
     }
     recordedChunksRef.current = [];
-    mediaRecorderRef.current = new MediaRecorder(stream, { mimeType: 'video/webm' });
+    
+    // Use a supported MIME type, like video/mp4, if available
+    const options = { mimeType: 'video/mp4' };
+    try {
+        mediaRecorderRef.current = new MediaRecorder(stream, options);
+    } catch(e) {
+        console.warn('video/mp4 not supported, falling back to default');
+        mediaRecorderRef.current = new MediaRecorder(stream);
+    }
 
     mediaRecorderRef.current.ondataavailable = (event) => {
       if (event.data.size > 0) {
@@ -87,7 +100,8 @@ export default function SignLanguagePage() {
   };
 
   const handleRecordingStop = () => {
-    const blob = new Blob(recordedChunksRef.current, { type: 'video/webm' });
+    const mimeType = mediaRecorderRef.current?.mimeType || 'video/webm';
+    const blob = new Blob(recordedChunksRef.current, { type: mimeType });
     const reader = new FileReader();
     reader.readAsDataURL(blob);
     reader.onloadend = async () => {
@@ -141,13 +155,24 @@ export default function SignLanguagePage() {
         <CardContent>
           <div className="aspect-video w-full bg-muted rounded-lg overflow-hidden flex items-center justify-center relative">
             <video ref={videoRef} autoPlay muted playsInline className="w-full h-full object-cover"></video>
-            {!stream && <p className="text-muted-foreground">Waiting for camera...</p>}
+            {hasCameraPermission === false && (
+              <div className="absolute flex flex-col items-center gap-2 text-muted-foreground">
+                <CameraOff className="h-12 w-12" />
+                <p>Camera access denied.</p>
+              </div>
+            )}
+            {hasCameraPermission === null && (
+               <div className="absolute flex items-center gap-2 text-muted-foreground">
+                <Loader2 className="h-6 w-6 animate-spin" />
+                <p>Waiting for camera...</p>
+              </div>
+            )}
             {isRecording && <div className="absolute top-2 right-2 flex items-center gap-2 bg-destructive/80 text-destructive-foreground p-1 rounded-md text-xs"><Circle className="h-3 w-3 fill-current" />REC</div>}
           </div>
         </CardContent>
         <CardFooter>
           {!isRecording && !isProcessing && (
-             <Button onClick={startRecording} disabled={!stream}>
+             <Button onClick={startRecording} disabled={!stream || !hasCameraPermission}>
               <Mic className="mr-2 h-4 w-4" /> Start Recording
             </Button>
           )}
@@ -182,10 +207,9 @@ export default function SignLanguagePage() {
             {translationState === 'success' && result && (
                 <div className="w-full space-y-4">
                     <Alert>
-                        <CheckCircle className="h-4 w-4" />
-                        <AlertTitle className="font-headline">Translation Successful</AlertTitle>
-                        <AlertDescription className="mt-2">
-                          <p className="text-lg">{result.text}</p>
+                        <AlertTitle className="font-headline">Translation:</AlertTitle>
+                        <AlertDescription className="mt-2 text-lg font-semibold">
+                          {result.text}
                         </AlertDescription>
                     </Alert>
 
