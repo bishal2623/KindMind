@@ -122,6 +122,12 @@ body {
     @apply bg-background text-foreground;
   }
   
+  .split body {
+    border: 2px solid black;
+    height: 100vh;
+    box-sizing: border-box;
+  }
+
   .split .colorful-dashboard .bg-primary\/10 {
     background-color: hsl(var(--chart-1) / 0.1);
     color: hsl(var(--chart-1));
