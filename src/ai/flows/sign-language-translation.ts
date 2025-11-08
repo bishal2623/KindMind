@@ -10,8 +10,6 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
-import {googleAI} from '@genkit-ai/google-genai';
-
 
 const SignLanguageTranslationInputSchema = z.object({
   videoDataUri: z
@@ -43,12 +41,14 @@ export async function translateSignLanguage(
 const translateSignLanguagePrompt = ai.definePrompt({
   name: 'translateSignLanguagePrompt',
   input: {schema: SignLanguageTranslationInputSchema},
-  output: {schema: z.object({
-    translatedText: z.string(), 
-    confidenceScore: z.number(), 
-    emotion: z.string()
-  })},
-  model: googleAI.model('gemini-1.5-flash'),
+  output: {
+    schema: z.object({
+      translatedText: z.string(),
+      confidenceScore: z.number(),
+      emotion: z.string(),
+    }),
+  },
+  model: 'googleai/gemini-1.5-flash-latest',
   prompt: `You are an expert sign language translator with the ability to understand emotional context.
 
 You will receive a video of sign language. Provide an accurate text translation.
@@ -96,7 +96,7 @@ async function toWav(
 
 async function textToSpeech(text: string): Promise<string> {
   const {media} = await ai.generate({
-    model: googleAI.model('gemini-2.5-flash-preview-tts'),
+    model: 'googleai/gemini-2.5-flash-preview-tts',
     config: {
       responseModalities: ['AUDIO'],
       speechConfig: {
@@ -129,7 +129,7 @@ const translateSignLanguageFlow = ai.defineFlow(
     if (!translationOutput) {
       throw new Error('Failed to translate sign language.');
     }
-    
+
     const speechUri = await textToSpeech(translationOutput.translatedText);
 
     if (!speechUri) {
