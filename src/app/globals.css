@@ -122,9 +122,9 @@ body {
     @apply bg-background text-foreground;
   }
   
-  .split body {
+  html.split body {
     border: 2px solid black;
-    height: 100vh;
+    min-height: 100vh;
     box-sizing: border-box;
   }
 
