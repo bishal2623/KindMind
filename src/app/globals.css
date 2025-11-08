@@ -112,8 +112,10 @@ body {
     --sidebar-ring: 346.8 77.2% 49.8%;
   }
 
-  .split body {
+  .split {
     border: 2px solid black;
+    height: 100vh;
+    box-sizing: border-box;
   }
 }
 
