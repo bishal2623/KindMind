@@ -112,11 +112,6 @@ body {
     --sidebar-ring: 346.8 77.2% 49.8%;
   }
 
-  .split {
-    border: 2px solid black;
-    height: 100vh;
-    box-sizing: border-box;
-  }
 }
 
 @layer base {
@@ -126,7 +121,7 @@ body {
   body {
     @apply bg-background text-foreground;
   }
-
+  
   .split .colorful-dashboard .bg-primary\/10 {
     background-color: hsl(var(--chart-1) / 0.1);
     color: hsl(var(--chart-1));

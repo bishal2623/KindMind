@@ -28,7 +28,9 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <div className="split:border-2 split:border-black split:h-screen split:box-border">
+            {children}
+          </div>
           <Toaster />
         </ThemeProvider>
       </body>
