@@ -44,7 +44,7 @@ const translateSignLanguagePrompt = ai.definePrompt({
   name: 'translateSignLanguagePrompt',
   input: {schema: SignLanguageTranslationInputSchema},
   output: {schema: z.object({translatedText: z.string(), confidenceScore: z.number(), emotion: z.string()})},
-  model: googleAI.model('gemini-pro-vision'),
+  model: googleAI.model('gemini-2.5-pro-preview'),
   prompt: `You are an expert sign language translator with the ability to understand emotional context.
 
 You will receive a video of sign language. Provide an accurate text translation.
