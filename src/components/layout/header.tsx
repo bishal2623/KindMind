@@ -9,7 +9,7 @@ import {
   Menu,
   Package2,
   Settings,
-  Users,
+  Siren,
   Video,
 } from 'lucide-react';
 
@@ -31,7 +31,7 @@ const navLinks = [
   { href: '/sign-language', icon: Video, label: 'Sign Language' },
   { href: '/companion', icon: Bot, label: 'AI Companion' },
   { href: '/journal', icon: BookOpen, label: 'Journal' },
-  { href: '/settings', icon: Settings, label: 'Settings' },
+  { href: '/emergency', icon: Siren, label: 'Emergency', className: 'text-destructive' },
 ];
 
 const pageTitles: { [key: string]: string } = {
@@ -40,6 +40,7 @@ const pageTitles: { [key: string]: string } = {
   '/companion': 'Empathetic AI Companion',
   '/journal': 'Mood Journal & History',
   '/settings': 'Accessibility Settings',
+  '/emergency': 'Emergency Mode',
 };
 
 export function Header() {
@@ -68,12 +69,19 @@ export function Header() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
+                className={`flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground ${link.className ?? ''}`}
               >
                 <link.icon className="h-5 w-5" />
                 {link.label}
               </Link>
             ))}
+             <Link
+                href="/settings"
+                className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
+              >
+                <Settings className="h-5 w-5" />
+                Settings
+              </Link>
           </nav>
         </SheetContent>
       </Sheet>

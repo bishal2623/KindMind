@@ -20,6 +20,7 @@ import {
 } from '@/components/ui/chart';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip } from 'recharts';
 import { Book, Save } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 const moodHistoryData = [
     { date: 'Mon', moodScore: 0.2 },
@@ -38,23 +39,32 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
+const moodOptions = [
+  { mood: 'awful', emoji: '😩', score: -0.8 },
+  { mood: 'bad', emoji: '😕', score: -0.4 },
+  { mood: 'okay', emoji: '😐', score: 0.0 },
+  { mood: 'good', emoji: '🙂', score: 0.4 },
+  { mood: 'great', emoji: '😄', score: 0.8 },
+];
 
 export default function JournalPage() {
   const [entry, setEntry] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+  const [selectedMood, setSelectedMood] = useState<{ mood: string; emoji: string; score: number } | null>(null);
   const { toast } = useToast();
 
   const handleSaveEntry = async () => {
-    if (!entry.trim()) {
-        toast({ title: "Entry is empty", description: "Please write something before saving.", variant: 'destructive' });
+    if (!entry.trim() && !selectedMood) {
+        toast({ title: "Entry is empty", description: "Please write something or select a mood.", variant: 'destructive' });
         return;
     }
     setIsSaving(true);
     // In a real app, this would call a server action to save to Firestore.
-    // await saveJournalEntry({ text: entry });
+    // await saveJournalEntry({ text: entry, moodScore: selectedMood?.score });
     setTimeout(() => {
         toast({ title: 'Journal Entry Saved', description: "Your thoughts have been safely recorded." });
         setEntry('');
+        setSelectedMood(null);
         setIsSaving(false);
     }, 1000);
   };
@@ -65,16 +75,36 @@ export default function JournalPage() {
         <CardHeader>
           <CardTitle className="font-headline flex items-center gap-2"><Book /> New Journal Entry</CardTitle>
           <CardDescription>
-            Record your thoughts and feelings. This is a safe space for you.
+            Record your thoughts and feelings. You can write, select a mood, or both.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Textarea
-            placeholder="How are you feeling today?"
-            className="min-h-64 resize-none"
-            value={entry}
-            onChange={(e) => setEntry(e.target.value)}
-          />
+          <div className="space-y-4">
+            <div>
+              <label className="text-sm font-medium mb-2 block">How are you feeling?</label>
+              <div className="flex justify-around p-2 bg-muted rounded-lg">
+                {moodOptions.map((option) => (
+                  <button
+                    key={option.mood}
+                    onClick={() => setSelectedMood(option)}
+                    className={cn(
+                      'p-2 rounded-full text-3xl transition-transform transform hover:scale-125',
+                      selectedMood?.mood === option.mood ? 'bg-primary/20 scale-125' : ''
+                    )}
+                    title={option.mood}
+                  >
+                    {option.emoji}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <Textarea
+              placeholder="Tell me more about your day..."
+              className="min-h-52 resize-none"
+              value={entry}
+              onChange={(e) => setEntry(e.target.value)}
+            />
+          </div>
         </CardContent>
         <CardFooter>
           <Button onClick={handleSaveEntry} disabled={isSaving}>

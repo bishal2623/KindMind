@@ -30,6 +30,7 @@ const SignLanguageTranslationOutputSchema = z.object({
   confidenceScore: z
     .number()
     .describe('A score indicating the confidence of the translation, from 0 to 1.'),
+  emotion: z.string().describe('The detected emotion or intent from the video (e.g., "questioning", "urgent", "happy").'),
 });
 export type SignLanguageTranslationOutput = z.infer<typeof SignLanguageTranslationOutputSchema>;
 
@@ -42,17 +43,20 @@ export async function translateSignLanguage(
 const translateSignLanguagePrompt = ai.definePrompt({
   name: 'translateSignLanguagePrompt',
   input: {schema: SignLanguageTranslationInputSchema},
-  output: {schema: z.object({translatedText: z.string(), confidenceScore: z.number()})},
-  prompt: `You are an expert sign language translator.
+  output: {schema: z.object({translatedText: z.string(), confidenceScore: z.number(), emotion: z.string()})},
+  prompt: `You are an expert sign language translator with the ability to understand emotional context.
 
-You will receive a video of sign language and provide an accurate text translation, along with a confidence score indicating the accuracy of the translation.
+You will receive a video of sign language. Provide an accurate text translation.
+Based on the user's facial expressions and the context of the signs, also determine the emotion or intent behind the message.
 
 Video: {{media url=videoDataUri}}
 
-Respond in JSON format with the translatedText and confidenceScore fields.
+Respond in JSON format with the translatedText, confidenceScore, and emotion fields.
+Example:
 {
-  "translatedText": "The translated text",
-  "confidenceScore": 0.95
+  "translatedText": "Where is the hospital?",
+  "confidenceScore": 0.92,
+  "emotion": "Urgent and questioning"
 }
 `,
 });
@@ -131,6 +135,7 @@ const translateSignLanguageFlow = ai.defineFlow(
       translatedText: translationOutput.translatedText,
       translatedSpeechUri: speechUri,
       confidenceScore: translationOutput.confidenceScore,
+      emotion: translationOutput.emotion,
     };
   }
 );

@@ -7,6 +7,7 @@ import {
   Home,
   Package2,
   Settings,
+  Siren,
   Video,
 } from 'lucide-react';
 import {
@@ -23,6 +24,7 @@ const navLinks = [
   { href: '/sign-language', icon: Video, label: 'Sign Language' },
   { href: '/companion', icon: Bot, label: 'AI Companion' },
   { href: '/journal', icon: BookOpen, label: 'Journal' },
+  { href: '/emergency', icon: Siren, label: 'Emergency', className: 'text-destructive hover:text-destructive-foreground hover:bg-destructive' },
 ];
 
 export function AppSidebar() {
@@ -47,7 +49,8 @@ export function AppSidebar() {
                   href={link.href}
                   className={cn(
                     'flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8',
-                    pathname === link.href && 'bg-accent text-accent-foreground'
+                    pathname === link.href && 'bg-accent text-accent-foreground',
+                    link.className
                   )}
                 >
                   <link.icon className="h-5 w-5" />

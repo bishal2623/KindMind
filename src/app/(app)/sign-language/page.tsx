@@ -11,10 +11,11 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { getSignLanguageTranslation } from '@/app/actions';
-import { Video, Mic, Loader2, Circle, Square, Volume2, Info, CheckCircle } from 'lucide-react';
+import { Video, Mic, Loader2, Circle, Square, Volume2, Info, CheckCircle, Smile, HelpCircle, Frown } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Badge } from '@/components/ui/badge';
 
 
 type TranslationState = 'idle' | 'recording' | 'processing' | 'success' | 'error';
@@ -22,6 +23,7 @@ interface TranslationResult {
   text: string;
   speechUri: string;
   confidence: number;
+  emotion: string;
 }
 
 export default function SignLanguagePage() {
@@ -92,7 +94,7 @@ export default function SignLanguagePage() {
       const base64data = reader.result as string;
       try {
         const res = await getSignLanguageTranslation({ videoDataUri: base64data });
-        setResult({ text: res.translatedText, speechUri: res.translatedSpeechUri, confidence: res.confidenceScore });
+        setResult({ text: res.translatedText, speechUri: res.translatedSpeechUri, confidence: res.confidenceScore, emotion: res.emotion });
         setTranslationState('success');
       } catch (error) {
         console.error('Translation failed:', error);
@@ -114,6 +116,20 @@ export default function SignLanguagePage() {
 
   const isProcessing = translationState === 'processing';
   const isRecording = translationState === 'recording';
+
+  const EmotionIndicator = ({ emotion }: { emotion: string }) => {
+    const lowerEmotion = emotion.toLowerCase();
+    let icon = <Smile className="h-4 w-4" />;
+    if (lowerEmotion.includes('question')) icon = <HelpCircle className="h-4 w-4" />;
+    if (lowerEmotion.includes('urgent') || lowerEmotion.includes('sad') || lowerEmotion.includes('angry')) icon = <Frown className="h-4 w-4" />;
+
+    return (
+        <Badge variant="outline" className="flex items-center gap-2">
+            {icon}
+            <span>{emotion}</span>
+        </Badge>
+    );
+  };
 
   return (
     <div className="grid gap-6 md:grid-cols-2">
@@ -172,17 +188,19 @@ export default function SignLanguagePage() {
                           <p className="text-lg">{result.text}</p>
                         </AlertDescription>
                     </Alert>
-                    
-                    <div className="flex justify-between items-center gap-4">
-                      <Button onClick={() => playAudio(result.speechUri)}>
-                          <Volume2 className="mr-2 h-4 w-4" /> Listen to translation
-                      </Button>
-                      <div className="flex flex-col items-end">
-                        <span className="text-sm font-medium">Confidence</span>
-                        <Progress value={result.confidence * 100} className="w-24 h-2 mt-1" />
-                        <span className="text-xs text-muted-foreground mt-1">{(result.confidence * 100).toFixed(0)}%</span>
-                      </div>
+
+                     <div className="flex justify-between items-center gap-4">
+                        <EmotionIndicator emotion={result.emotion} />
+                        <div className="flex flex-col items-end">
+                            <span className="text-sm font-medium">Confidence</span>
+                            <Progress value={result.confidence * 100} className="w-24 h-2 mt-1" />
+                            <span className="text-xs text-muted-foreground mt-1">{(result.confidence * 100).toFixed(0)}%</span>
+                        </div>
                     </div>
+                    
+                    <Button onClick={() => playAudio(result.speechUri)} className="w-full">
+                        <Volume2 className="mr-2 h-4 w-4" /> Listen to translation
+                    </Button>
 
                 </div>
             )}
