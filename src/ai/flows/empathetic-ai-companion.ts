@@ -9,8 +9,6 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
-import { analyzeSentiment } from '../../services/sentiment-analyzer';
-import { MoodScore } from '../../types/mood';
 
 const EmpatheticAICompanionInputSchema = z.object({
   userInput: z.string().describe('The user input text to analyze.'),
@@ -74,7 +72,6 @@ Do you want to tell me what’s bothering you, or should I try to cheer you up?"
         },
         output: {
             format: 'text',
-            schema: z.string().max(150)
         }
     });
 
