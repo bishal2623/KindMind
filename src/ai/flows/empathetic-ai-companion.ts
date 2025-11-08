@@ -9,8 +9,8 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
-import { analyzeSentiment } from '@/services/sentiment-analyzer';
-import { MoodScore } from '@/types/mood';
+import { analyzeSentiment } from '../../services/sentiment-analyzer';
+import { MoodScore } from '../../types/mood';
 
 const EmpatheticAICompanionInputSchema = z.object({
   userInput: z.string().describe('The user input text to analyze.'),
@@ -27,38 +27,52 @@ export async function empatheticAICompanion(input: EmpatheticAICompanionInput): 
   return empatheticAICompanionFlow(input);
 }
 
-const prompt = ai.definePrompt({
-  name: 'empatheticAICompanionPrompt',
-  input: {schema: EmpatheticAICompanionInputSchema},
-  output: {schema: EmpatheticAICompanionOutputSchema},
-  prompt: `You are an empathetic AI companion designed to provide support and suggestions to users based on their input.\n\nYou will analyze the user input and provide a sentiment score and suggested actions.\n\nUser Input: {{{userInput}}}\n\nSentiment Score: {{sentimentScore}}\n\nSuggested Actions: {{{suggestedActions}}}`,
-});
+const getSuggestedActionsTool = ai.defineTool(
+    {
+        name: 'getSuggestedActions',
+        description: 'Get suggested actions based on sentiment score.',
+        inputSchema: z.object({ sentimentScore: z.number() }),
+        outputSchema: z.array(z.string()),
+    },
+    async ({sentimentScore}) => {
+        if (sentimentScore > 0.5) {
+            return ['Continue with your day', 'Share your positivity with others'];
+        } else if (sentimentScore < -0.5) {
+            return ['Take a break and relax', 'Talk to a friend or family member'];
+        } else {
+            return ['Reflect on your day', 'Practice mindfulness'];
+        }
+    }
+);
 
 const empatheticAICompanionFlow = ai.defineFlow(
   {
     name: 'empatheticAICompanionFlow',
     inputSchema: EmpatheticAICompanionInputSchema,
     outputSchema: EmpatheticAICompanionOutputSchema,
+    tools: [getSuggestedActionsTool]
   },
   async input => {
     const sentimentScore = await analyzeSentiment(input.userInput) as MoodScore;
-    const suggestedActions = await getSuggestedActions(sentimentScore);
-
-    const {output} = await prompt({
-      ...input,
-      sentimentScore,
-      suggestedActions,
+    
+    const llmResponse = await ai.generate({
+        prompt: `You are an empathetic AI companion designed to provide support and suggestions to users based on their input. Analyze the user input and provide a sentiment score and suggested actions. User Input: ${input.userInput}`,
+        model: 'googleai/gemini-2.5-flash',
+        tools: [getSuggestedActionsTool],
+        toolChoice: 'required',
     });
-    return output!;
+
+    const toolRequest = llmResponse.toolRequest();
+
+    if (!toolRequest) {
+        throw new Error('Expected a tool request to get suggested actions.');
+    }
+    
+    const toolResponse = await toolRequest.run();
+
+    return {
+      sentimentScore,
+      suggestedActions: toolResponse as string[],
+    };
   }
 );
-
-async function getSuggestedActions(sentimentScore: number): Promise<string[]> {
-  if (sentimentScore > 0.5) {
-    return ['Continue with your day', 'Share your positivity with others'];
-  } else if (sentimentScore < -0.5) {
-    return ['Take a break and relax', 'Talk to a friend or family member'];
-  } else {
-    return ['Reflect on your day', 'Practice mindfulness'];
-  }
-}
