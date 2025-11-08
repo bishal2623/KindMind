@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { cn } from '@/lib/utils';
 
 const featureCards = [
   {
@@ -38,7 +39,7 @@ const featureCards = [
 
 export default function DashboardPage() {
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-8 colorful-dashboard">
       <div>
         <h2 className="font-headline text-3xl mb-1">Welcome to KindMind</h2>
         <p className="text-muted-foreground">

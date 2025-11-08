@@ -55,7 +55,7 @@ body {
     --secondary-foreground: 210 40% 98%;
     --muted: 217 33% 17%;
     --muted-foreground: 215 20% 65%;
-accent: 259 100% 87%;
+    --accent: 259 100% 87%;
     --accent-foreground: 259 47% 11%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
@@ -76,6 +76,45 @@ accent: 259 100% 87%;
     --sidebar-border: 217 20% 27%;
     --sidebar-ring: 203 71% 65%;
   }
+  .split {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
+    --card: 0 0% 96.1%;
+    --card-foreground: 0 0% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
+    --primary: 346.8 77.2% 49.8%;
+    --primary-foreground: 355.7 100% 97.3%;
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+    --accent: 0 0% 94.1%;
+    --accent-foreground: 0 0% 9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 346.8 77.2% 49.8%;
+    --radius: 0.5rem;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    --sidebar-background: 0 0% 9%;
+    --sidebar-foreground: 0 0% 98%;
+    --sidebar-primary: 346.8 77.2% 49.8%;
+    --sidebar-primary-foreground: 355.7 100% 97.3%;
+    --sidebar-accent: 0 0% 14.9%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 0 0% 14.9%;
+    --sidebar-ring: 346.8 77.2% 49.8%;
+  }
+
+  .split body {
+    border: 10px solid black;
+  }
 }
 
 @layer base {
@@ -85,4 +124,18 @@ accent: 259 100% 87%;
   body {
     @apply bg-background text-foreground;
   }
+
+  .split .colorful-dashboard .bg-primary\/10 {
+    background-color: hsl(var(--chart-1) / 0.1);
+    color: hsl(var(--chart-1));
+  }
+  .split .colorful-dashboard .bg-primary\/10:nth-child(2) {
+    background-color: hsl(var(--chart-2) / 0.1);
+    color: hsl(var(--chart-2));
+  }
+  .split .colorful-dashboard .bg-primary\/10:nth-child(3) {
+    background-color: hsl(var(--chart-3) / 0.1);
+    color: hsl(var(--chart-3));
+  }
+
 }
