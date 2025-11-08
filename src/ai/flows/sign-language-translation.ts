@@ -17,7 +17,7 @@ const SignLanguageTranslationInputSchema = z.object({
   videoDataUri: z
     .string()
     .describe(
-      "A video of sign language, as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'."
+      "A video of sign language, as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'"
     ),
 });
 export type SignLanguageTranslationInput = z.infer<typeof SignLanguageTranslationInputSchema>;
@@ -53,23 +53,6 @@ Respond in JSON format with the translatedText and confidenceScore fields.
 {
   "translatedText": "The translated text",
   "confidenceScore": 0.95
-}
-`,
-});
-
-const translateTextToSpeechPrompt = ai.definePrompt({
-  name: 'translateTextToSpeechPrompt',
-  input: {schema: z.object({text: z.string()})},
-  output: {schema: z.object({speechUri: z.string()})},
-  prompt: `You are an expert at generating kind, supportive speech.
-
-You will receive text and create an audio version of the text that captures the kind and supportive nature of the text.
-
-Text: {{{text}}}
-
-Respond in JSON format with the speechUri containing a data URI of the speech output.
-{
-  "speechUri": "data:audio/wav;base64,..."
 }
 `,
 });
@@ -136,18 +119,16 @@ const translateSignLanguageFlow = ai.defineFlow(
     if (!translationOutput) {
       throw new Error('Failed to translate sign language.');
     }
+    
+    const speechUri = await textToSpeech(translationOutput.translatedText);
 
-    const {output: speechOutput} = await translateTextToSpeechPrompt({
-      text: translationOutput.translatedText,
-    });
-
-    if (!speechOutput) {
+    if (!speechUri) {
       throw new Error('Failed to generate speech from text.');
     }
 
     return {
       translatedText: translationOutput.translatedText,
-      translatedSpeechUri: speechOutput.speechUri,
+      translatedSpeechUri: speechUri,
       confidenceScore: translationOutput.confidenceScore,
     };
   }
