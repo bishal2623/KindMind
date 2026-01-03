@@ -1,95 +1,107 @@
-<h1 align="center">🌱 KindMind</h1>
-<h3 align="center">An AI-Powered Accessibility & Wellness Platform ♿🤍</h3>
+<h1 align="center">KindMind</h1>
+<h3 align="center">An AI-Powered Accessibility & Wellness Platform</h3>
 
 <p align="center">
-  <i>“Let intelligence make the world kinder.”</i>
+  <em>Let intelligence make the world kinder.</em>
 </p>
 
 <hr/>
 
-<h2>🌍 About KindMind</h2>
+<h2>Overview</h2>
 
 <p>
-<b>KindMind</b> is a comprehensive digital dashboard designed to
-<strong>bridge communication gaps</strong> and <strong>support mental well-being</strong>
-through artificial intelligence.
+<strong>KindMind</strong> is a unified digital platform built to improve
+<strong>accessibility</strong>, <strong>emotional well-being</strong>, and
+<strong>personal safety</strong> using artificial intelligence.
 </p>
 
 <p>
-The platform focuses on accessibility, emotional support, and emergency
-assistance — bringing <b>human-centric AI</b> into everyday life.
+The project focuses on creating <strong>human-centric AI tools</strong> that
+support inclusive communication, mental wellness, and emergency assistance
+in real-world scenarios.
 </p>
 
 <hr/>
 
-<h2>✨ Core Features</h2>
+<h2>Core Features</h2>
 
-<h3>🧏 Sign Language Translator</h3>
+<h3>Sign Language Translator</h3>
 <ul>
-  <li>📷 Real-time camera-based hand gesture detection</li>
-  <li>🔤 Translates sign language into readable text</li>
-  <li>🔊 Converts gestures into speech output</li>
-  <li>♿ Helps bridge communication for the deaf and hard-of-hearing community</li>
+  <li>Real-time camera-based hand gesture detection</li>
+  <li>Translates sign language into readable text</li>
+  <li>Optional speech output for better accessibility</li>
+  <li>Designed to assist the deaf and hard-of-hearing community</li>
 </ul>
 
-<h3>💬 Empathetic AI Companion</h3>
+<h3>Empathetic AI Companion</h3>
 <ul>
-  <li>🤖 Emotion-aware conversational AI</li>
-  <li>🧠 Remembers context for meaningful conversations</li>
-  <li>❤️ Offers encouragement, comfort, and understanding</li>
-  <li>🌙 Inspired by ChatGPT-style interactions</li>
+  <li>Emotion-aware conversational AI</li>
+  <li>Maintains context for natural, meaningful conversations</li>
+  <li>Provides encouragement and emotional support</li>
+  <li>Inspired by ChatGPT-style interaction patterns</li>
 </ul>
 
-<h3>📊 Mood Journal & History</h3>
+<h3>Mood Journal & History</h3>
 <ul>
-  <li>📝 Record daily thoughts and reflections</li>
-  <li>😀 Emoji-based mood selection</li>
-  <li>📈 Weekly Mood History graph</li>
-  <li>🔍 Helps visualize emotional trends over time</li>
+  <li>Daily mood and thought logging</li>
+  <li>Emoji-based emotion selection</li>
+  <li>Weekly mood history visualization</li>
+  <li>Helps identify emotional trends over time</li>
 </ul>
 
-<h3>🚨 Emergency Mode</h3>
+<h3>Emergency Mode</h3>
 <ul>
-  <li>⚡ One-tap access to emergency phrases</li>
-  <li>📢 Large, high-contrast text display</li>
-  <li>🔊 Loud audio output for attention</li>
-  <li>🛟 Designed for non-verbal or distressed users</li>
-</ul>
-
-<hr/>
-
-<h2>🎨 Design & User Experience</h2>
-
-<ul>
-  <li>🌑 <b>Dark Mode Interface</b> — modern, calm, and eye-friendly</li>
-  <li>🧭 <b>Intuitive Sidebar Navigation</b> for fast tool switching</li>
-  <li>🏷️ <b>Status Indicators</b> like <code>LIVE</code> and <code>BETA</code></li>
-  <li>⚠️ Clear error handling (camera permissions & system feedback)</li>
-  <li>📱 Clean, responsive, and user-centric layout</li>
+  <li>Quick-access emergency phrases</li>
+  <li>Large, high-contrast visual output</li>
+  <li>Loud audio alerts for attention</li>
+  <li>Useful for non-verbal or distressed individuals</li>
 </ul>
 
 <hr/>
 
-<h2>🎯 Potential Use Cases</h2>
+<h2>Design & User Experience</h2>
 
-<ol>
-  <li>🤝 <b>Inclusive Communication</b> in public spaces and meetings</li>
-  <li>🧘 <b>Daily Mental Wellness</b> through journaling and AI support</li>
-  <li>🛡️ <b>Safety for the Vulnerable</b> in urgent or non-verbal situations</li>
-</ol>
+<ul>
+  <li>Dark-mode focused interface to reduce eye strain</li>
+  <li>Clean and intuitive sidebar-based navigation</li>
+  <li>Status indicators such as <code>LIVE</code> and <code>BETA</code></li>
+  <li>User-friendly error handling (e.g. camera permissions)</li>
+  <li>Responsive and accessibility-first layout</li>
+</ul>
 
 <hr/>
 
-<h2>🌟 Vision</h2>
+<h2>Potential Use Cases</h2>
+
+<ul>
+  <li>Inclusive communication in public spaces and meetings</li>
+  <li>Daily mental wellness tracking and reflection</li>
+  <li>Emergency assistance for vulnerable or non-verbal users</li>
+</ul>
+
+<hr/>
+
+<h2>Technology Stack</h2>
+
+<ul>
+  <li><strong>TypeScript</strong> — application logic and structure</li>
+  <li><strong>CSS</strong> — modern, responsive user interface design</li>
+  <li>Browser Media APIs — camera and audio access</li>
+  <li>AI & ML integrations — gesture detection and conversational intelligence</li>
+</ul>
+
+<hr/>
+
+<h2>Project Vision</h2>
 
 <p>
-KindMind aims to create a more inclusive and compassionate digital ecosystem
-by combining accessibility tools with emotionally intelligent AI —
-making technology truly supportive for everyone.
+KindMind aims to demonstrate how artificial intelligence can be used responsibly
+to build a more inclusive, empathetic, and supportive digital environment.
+The project is designed to be scalable, impactful, and socially relevant.
 </p>
 
 <hr/>
 
 <p align="center">
-  💙 Built with empathy &nbsp;•&nbsp; ♿ Designed for accessibility &nbsp;•&nbsp; 🌍 Made to make a difference
+  Built with empathy • Designed for accessibility • Focused on real-world impact
 </p>
