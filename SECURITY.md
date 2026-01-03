@@ -1,69 +1,69 @@
-<h1>🔐 Security & Privacy</h1>
+# 🔐 Security Policy — KindMind
 
-<p>
-<b>KindMind</b> is built with a strong commitment to
-<strong>user safety, privacy, and ethical AI usage</strong>.
-All security-sensitive features are designed to remain transparent,
-user-controlled, and respectful of personal boundaries.
-</p>
+KindMind takes security and user safety seriously.  
+We appreciate the efforts of the community in helping us identify and
+responsibly disclose potential security issues.
 
-<hr/>
+---
 
-<h2>🛡️ User Privacy First</h2>
+## 📢 Reporting a Vulnerability
 
-<ul>
-  <li>🔒 KindMind does not collect or store sensitive personal data without consent</li>
-  <li>🧠 Emotional inputs such as mood entries are intended for private user use</li>
-  <li>📵 No background data collection or hidden tracking mechanisms</li>
-</ul>
+If you discover a security vulnerability in KindMind, please report it
+responsibly.
 
-<hr/>
+### Preferred Reporting Method
+- Use **GitHub Private Vulnerability Reporting** (recommended)
+- Do NOT create a public GitHub issue for security-related problems
 
-<h2>📷 Camera & Media Security</h2>
+This allows us to investigate and address the issue before public disclosure.
 
-<ul>
-  <li>✅ Camera access is requested only when the user explicitly starts it</li>
-  <li>🚫 No camera access runs in the background</li>
-  <li>👁️ Clear on-screen indicators show when the camera is active</li>
-  <li>⚠️ Helpful prompts guide users if permissions are denied</li>
-</ul>
+---
 
-<hr/>
+## 🛡️ Scope of Security
 
-<h2>🤖 AI Safety & Responsible Use</h2>
+Security considerations apply to:
 
-<ul>
-  <li>🧩 AI responses are designed to support users, not replace professional help</li>
-  <li>⚠️ Emergency Mode encourages real-world assistance when required</li>
-  <li>🧠 Conversational AI avoids harmful, misleading, or manipulative responses</li>
-</ul>
+- Camera and media access features
+- AI interaction and response handling
+- Emergency Mode functionality
+- Client-side data handling
+- Any future backend or authentication systems
 
-<hr/>
+---
 
-<h2>🌐 Platform Security</h2>
+## 📷 Camera & Permission Safety
 
-<ul>
-  <li>🔐 Secure HTTPS environment is required for all sensitive features</li>
-  <li>🛡️ Browser-level permission handling ensures user control</li>
-  <li>⚙️ Modular system design allows future security upgrades</li>
-</ul>
+- Camera access is only requested when explicitly initiated by the user
+- No background or hidden recording is performed
+- Permission denial is handled gracefully with clear user feedback
 
-<hr/>
+---
 
-<h2>🚀 Future Security Enhancements</h2>
+## 🤖 Responsible AI Use
 
-<ul>
-  <li>🔑 User authentication and access control</li>
-  <li>🔒 Encrypted storage for user-generated data</li>
-  <li>📊 Activity logging for emergency features</li>
-  <li>🚫 Rate limiting and abuse prevention for AI services</li>
-</ul>
+- The Empathetic AI Companion is designed to provide emotional support, not
+  professional medical or legal advice
+- Emergency Mode encourages seeking real-world assistance when needed
+- AI outputs are constrained to avoid harmful or misleading content
 
-<hr/>
+---
 
-<p>
-<b>KindMind</b> follows a <strong>privacy-first</strong> and
-<strong>user-controlled security model</strong>,
-ensuring that accessibility and wellness tools remain
-safe, ethical, and trustworthy.
-</p>
+## 🔒 Data Privacy
+
+- No sensitive personal data is intentionally collected without user consent
+- User-generated content (e.g. mood entries) is intended for private use
+- The platform follows a privacy-first design approach
+
+---
+
+## 🕒 Security Updates
+
+Security updates and fixes will be released as soon as reasonably possible
+after validation of a reported issue.
+
+---
+
+## 🤝 Acknowledgements
+
+We appreciate responsible disclosure and thank contributors who help keep
+KindMind safe and trustworthy.
