@@ -8,9 +8,9 @@
     },
     {
       "id": "ai-companion",
-      "description": "A person is comforted by a friendly robot, symbolizing empathetic AI support.",
-      "imageUrl": "https://images.unsplash.com/photo-1589254065909-b7086229d092?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxmcmllbmRseSUyMHJvYm90fGVufDB8fHx8MTc2MjU5MjA5N3ww&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "friendly robot"
+      "description": "A robot comforts another robot, symbolizing empathetic AI support.",
+      "imageUrl": "https://storage.googleapis.com/fab-prompt-images/2a138c20-3023-4556-919f-02f5a89d313d.png",
+      "imageHint": "empathy robot"
     },
     {
       "id": "journaling",
