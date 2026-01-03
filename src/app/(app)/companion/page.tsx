@@ -4,11 +4,10 @@ import { useState, useRef, useEffect } from 'react';
 import { Send, Bot, User, Volume2, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { getEmpatheticResponse, getTextToSpeech } from '@/app/actions';
 import { cn } from '@/lib/utils';
+import Image from 'next/image';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 interface Message {
   id: number;
@@ -18,24 +17,16 @@ interface Message {
 }
 
 export default function CompanionPage() {
-  const [messages, setMessages] = useState<Message[]>([
-    { id: 1, sender: 'ai', text: "Hello! I'm your empathetic AI companion. How are you feeling today?" }
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const scrollAreaRef = useRef<HTMLDivElement>(null);
-
-  const scrollToBottom = () => {
-    if (scrollAreaRef.current) {
-        const viewport = scrollAreaRef.current.querySelector('div');
-        if (viewport) {
-            viewport.scrollTop = viewport.scrollHeight;
-        }
-    }
-  };
+  const chatBoxRef = useRef<HTMLDivElement>(null);
+  const companionImage = PlaceHolderImages.find(p => p.id === 'ai-companion');
 
   useEffect(() => {
-    scrollToBottom();
+    if (chatBoxRef.current) {
+      chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
+    }
   }, [messages]);
 
   const handleSendMessage = async (e: React.FormEvent) => {
@@ -44,11 +35,12 @@ export default function CompanionPage() {
 
     const userMessage: Message = { id: Date.now(), sender: 'user', text: input };
     setMessages((prev) => [...prev, userMessage]);
+    const currentInput = input;
     setInput('');
     setIsLoading(true);
 
     try {
-      const aiResponse = await getEmpatheticResponse({ userInput: input });
+      const aiResponse = await getEmpatheticResponse({ userInput: currentInput });
       const aiText = aiResponse.response;
       
       const speechResponse = await getTextToSpeech({ text: aiText });
@@ -80,81 +72,70 @@ export default function CompanionPage() {
   };
 
   return (
-    <Card className="w-full h-[calc(100vh-10rem)] md:h-[calc(100vh-8rem)] flex flex-col">
-      <CardHeader>
-        <CardTitle className="font-headline flex items-center gap-2"><Bot /> AI Companion</CardTitle>
-      </CardHeader>
-      <CardContent className="flex-grow overflow-hidden">
-        <ScrollArea className="h-full" ref={scrollAreaRef}>
-          <div className="space-y-4 pr-4">
+    <div className="flex justify-center items-center h-full">
+      <div className="w-full max-w-md bg-[#111827] rounded-xl p-4 shadow-2xl text-white">
+        {companionImage && (
+            <Image
+                src={companionImage.imageUrl}
+                alt={companionImage.description}
+                data-ai-hint={companionImage.imageHint}
+                width={320}
+                height={180}
+                className="w-full h-44 object-cover rounded-lg mb-3"
+            />
+        )}
+        <h3 className="text-xl font-bold font-headline">Empathetic AI Companion</h3>
+        <p className="text-sm text-gray-400 mb-3">Talk to a supportive AI friend who listens and understands.</p>
+        
+        <div ref={chatBoxRef} className="mt-3 h-52 overflow-y-auto bg-[#020617] p-2.5 rounded-lg flex flex-col gap-2">
+            {messages.length === 0 && (
+                <div className="flex justify-center items-center h-full">
+                    <p className="text-gray-500">How are you feeling today?</p>
+                </div>
+            )}
             {messages.map((message) => (
               <div
                 key={message.id}
                 className={cn(
-                  'flex items-start gap-3',
-                  message.sender === 'user' ? 'justify-end' : 'justify-start'
+                  'p-2 rounded-lg max-w-[90%] text-sm flex items-start gap-2',
+                  message.sender === 'user' ? 'bg-[#1d4ed8] self-end' : 'bg-[#334155] self-start'
                 )}
               >
-                {message.sender === 'ai' && (
-                  <Avatar className="h-8 w-8">
-                    <AvatarFallback>AI</AvatarFallback>
-                  </Avatar>
-                )}
-                <div className={cn(
-                    'max-w-xs md:max-w-md lg:max-w-lg p-3 rounded-lg',
-                    message.sender === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted'
-                )}>
-                  <p className="text-sm whitespace-pre-wrap">{message.text}</p>
+                  <p className="whitespace-pre-wrap">{message.text}</p>
                   {message.sender === 'ai' && message.audioUrl && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="mt-2 h-auto p-1 text-muted-foreground"
+                    <button
+                      className="text-gray-300 hover:text-white transition-colors"
                       onClick={() => playAudio(message.audioUrl!)}
                     >
-                      <Volume2 className="h-4 w-4 mr-1" />
-                      Listen
-                    </Button>
+                      <Volume2 className="h-4 w-4" />
+                    </button>
                   )}
-                </div>
-                 {message.sender === 'user' && (
-                  <Avatar className="h-8 w-8">
-                    <AvatarFallback><User/></AvatarFallback>
-                  </Avatar>
-                )}
               </div>
             ))}
              {isLoading && (
-              <div className="flex items-start gap-3 justify-start">
-                <Avatar className="h-8 w-8">
-                  <AvatarFallback>AI</AvatarFallback>
-                </Avatar>
-                <div className="bg-muted p-3 rounded-lg flex items-center space-x-2">
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    <span className="text-sm text-muted-foreground">Thinking...</span>
-                </div>
+              <div className="bg-[#334155] self-start p-2 rounded-lg flex items-center space-x-2">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <span className="text-sm text-gray-300">Thinking...</span>
               </div>
             )}
-          </div>
-        </ScrollArea>
-      </CardContent>
-      <CardFooter>
-        <form onSubmit={handleSendMessage} className="flex w-full items-center space-x-2">
+        </div>
+        
+        <form onSubmit={handleSendMessage} className="flex w-full items-center space-x-2 mt-2">
           <Input
-            id="message"
-            placeholder="Type your message..."
-            className="flex-1"
+            id="userInput"
+            placeholder="Type how you feel..."
+            className="flex-1 bg-white text-black border-none"
             autoComplete="off"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             disabled={isLoading}
           />
-          <Button type="submit" size="icon" disabled={isLoading || !input.trim()}>
+          <Button type="submit" size="icon" disabled={isLoading || !input.trim()} className="bg-[#38bdf8] hover:bg-[#0ea5e9]">
             <Send className="h-4 w-4" />
             <span className="sr-only">Send</span>
           </Button>
         </form>
-      </CardFooter>
-    </Card>
+      </div>
+    </div>
   );
 }
