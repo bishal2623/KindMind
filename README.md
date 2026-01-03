@@ -108,3 +108,7 @@ but also <strong>kind, accessible, and human-focused</strong>.
   ♿ Designed for accessibility &nbsp;•&nbsp;
   🌍 Focused on real-world impact
 </p>
+
+## 📜 License
+This project is licensed under the MIT License.
+
