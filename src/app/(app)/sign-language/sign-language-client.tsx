@@ -5,17 +5,26 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Hands, Results, HAND_CONNECTIONS } from '@mediapipe/hands';
-import { Camera } from '@mediapipe/camera_utils';
-import { drawConnectors, drawLandmarks } from '@mediapipe/drawing_utils';
+import { type Hands, type Results } from '@mediapipe/hands';
+import '@mediapipe/camera_utils';
+import '@mediapipe/drawing_utils';
 import { Camera as CameraIcon } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
+
+declare global {
+    interface Window {
+        Camera: any;
+        Hands: typeof Hands;
+        HAND_CONNECTIONS: any;
+        drawConnectors: (ctx: CanvasRenderingContext2D, landmarks: any, connections: any, options: any) => void;
+        drawLandmarks: (ctx: CanvasRenderingContext2D, landmarks: any, options: any) => void;
+    }
+}
 
 export default function SignLanguageClient() {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -24,42 +33,31 @@ export default function SignLanguageClient() {
   const [isCameraStarted, setIsCameraStarted] = useState(false);
   const [hasCameraPermission, setHasCameraPermission] = useState(true);
   const { toast } = useToast();
+  const handsRef = useRef<Hands | null>(null);
 
   useEffect(() => {
-    if (isCameraStarted && hasCameraPermission) {
-      const hands = new Hands({
-        locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`,
-      });
-
-      hands.setOptions({
-        maxNumHands: 1,
-        modelComplexity: 1,
-        minDetectionConfidence: 0.7,
-        minTrackingConfidence: 0.7,
-      });
-
-      hands.onResults(onResults);
-
-      if (videoRef.current) {
-        const camera = new Camera(videoRef.current, {
-          onFrame: async () => {
-            if (videoRef.current) {
-              await hands.send({ image: videoRef.current });
-            }
-          },
-          width: 640,
-          height: 360,
+    // Dynamically import Hands to ensure it runs client-side
+    import('@mediapipe/hands').then((mpHands) => {
+        handsRef.current = new mpHands.Hands({
+            locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`,
         });
-        camera.start();
+        
+        handsRef.current.setOptions({
+            maxNumHands: 1,
+            modelComplexity: 1,
+            minDetectionConfidence: 0.7,
+            minTrackingConfidence: 0.7,
+        });
 
-        return () => {
-          camera.stop();
-          hands.close();
-        };
-      }
+        handsRef.current.onResults(onResults);
+    });
+    
+    return () => {
+      handsRef.current?.close();
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isCameraStarted, hasCameraPermission]);
+  }, []);
+
 
   function onResults(results: Results) {
     if (canvasRef.current && videoRef.current) {
@@ -75,11 +73,11 @@ export default function SignLanguageClient() {
       
       if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
         for (const landmarks of results.multiHandLandmarks) {
-          drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {
+          window.drawConnectors(canvasCtx, landmarks, window.HAND_CONNECTIONS, {
             color: '#38bdf8',
             lineWidth: 3,
           });
-          drawLandmarks(canvasCtx, landmarks, { color: '#e5e7eb', lineWidth: 2 });
+          window.drawLandmarks(canvasCtx, landmarks, { color: '#e5e7eb', lineWidth: 2 });
         }
         setOutputMessage('Hand detected 👋 (Translation in progress)');
       } else {
@@ -90,14 +88,26 @@ export default function SignLanguageClient() {
   }
 
   const handleStartCamera = async () => {
+    if (!videoRef.current || !handsRef.current) return;
+    
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      videoRef.current.srcObject = stream;
       setHasCameraPermission(true);
+      
+      const camera = new window.Camera(videoRef.current, {
+        onFrame: async () => {
+          if (videoRef.current) {
+            await handsRef.current!.send({ image: videoRef.current });
+          }
+        },
+        width: 640,
+        height: 360,
+      });
+
+      camera.start();
       setIsCameraStarted(true);
 
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-      }
     } catch (error) {
       console.error('Error accessing camera:', error);
       setHasCameraPermission(false);
@@ -125,7 +135,7 @@ export default function SignLanguageClient() {
                   <Alert variant="destructive" className="w-auto">
                     <AlertTitle>Camera Access Required</AlertTitle>
                     <AlertDescription>
-                      Please allow camera access to start.
+                      Click "Start Camera" and allow access.
                     </AlertDescription>
                   </Alert>
               </div>
