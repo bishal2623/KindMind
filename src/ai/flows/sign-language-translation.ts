@@ -124,6 +124,11 @@ const translateSignLanguageFlow = ai.defineFlow(
     outputSchema: SignLanguageTranslationOutputSchema,
   },
   async input => {
+    // This flow is now effectively unused by the new MediaPipe implementation,
+    // but we leave it here in case it's needed for other purposes.
+    // In a real production scenario, this might be deprecated or removed.
+    console.warn("translateSignLanguageFlow is being called, but the UI has been updated to a real-time MediaPipe implementation. This flow may be deprecated.");
+
     const {output: translationOutput} = await translateSignLanguagePrompt(input);
 
     if (!translationOutput) {
