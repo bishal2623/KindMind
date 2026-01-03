@@ -103,12 +103,14 @@ but also <strong>kind, accessible, and human-focused</strong>.
 
 <hr/>
 
+
+## 📜 License
+This project is licensed under the MIT License.
+
 <p align="center">
   💙 Built with empathy &nbsp;•&nbsp;
   ♿ Designed for accessibility &nbsp;•&nbsp;
   🌍 Focused on real-world impact
 </p>
 
-## 📜 License
-This project is licensed under the MIT License.
 
