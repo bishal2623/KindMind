@@ -8,9 +8,9 @@
     },
     {
       "id": "ai-companion",
-      "description": "A robot comforts another robot, symbolizing empathetic AI support.",
-      "imageUrl": "https://storage.googleapis.com/fab-prompt-images/2a138c20-3023-4556-919f-02f5a89d313d.png",
-      "imageHint": "empathy robot"
+      "description": "A close-up of a robot's hand gently holding a human hand, symbolizing a connection between technology and humanity.",
+      "imageUrl": "https://images.unsplash.com/photo-1525182008055-f88b95ff7980",
+      "imageHint": "robot human"
     },
     {
       "id": "journaling",
