@@ -10,8 +10,7 @@ import Image from 'next/image';
 import type { ImagePlaceholder } from '@/lib/placeholder-images';
 
 interface Message {
-  id: number;
-  sender: 'user' | 'ai';
+  role: 'user' | 'model';
   text: string;
 }
 
@@ -29,35 +28,35 @@ export default function CompanionClientPage({ companionImage }: CompanionClientP
     if (chatBoxRef.current) {
       chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
     }
-  }, [messages]);
+  }, [messages, isLoading]);
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim() || isLoading) return;
 
-    const userMessage: Message = { id: Date.now(), sender: 'user', text: input };
-    setMessages((prev) => [...prev, userMessage]);
+    const newUserMessage: Message = { role: 'user', text: input };
+    const newMessages = [...messages, newUserMessage];
+    setMessages(newMessages);
     const currentInput = input;
     setInput('');
     setIsLoading(true);
 
     try {
-      const aiResponse = await getEmpatheticResponse({ userInput: currentInput });
+      const history = messages.map(m => ({ role: m.role, text: m.text }));
+      const aiResponse = await getEmpatheticResponse({ userInput: currentInput, history });
       const aiText = aiResponse.response;
       
-      const aiMessage: Message = {
-        id: Date.now() + 1,
-        sender: 'ai',
+      const newAiMessage: Message = {
+        role: 'model',
         text: aiText,
       };
-      setMessages((prev) => [...prev, aiMessage]);
+      setMessages((prev) => [...prev, newAiMessage]);
 
     } catch (error) {
       console.error('Failed to get response:', error);
       const errorMessage: Message = {
-        id: Date.now() + 1,
-        sender: 'ai',
-        text: "I'm here to listen. Could you tell me more?",
+        role: 'model',
+        text: "I'm here with you. Tell me more.",
       };
       setMessages((prev) => [...prev, errorMessage]);
     } finally {
@@ -67,57 +66,55 @@ export default function CompanionClientPage({ companionImage }: CompanionClientP
 
   return (
     <div className="flex justify-center items-center h-full">
-      <div className="w-full max-w-sm bg-[#111827] rounded-xl p-4 shadow-2xl text-white">
+      <div className="w-full max-w-md bg-[#111827] rounded-2xl p-4 shadow-2xl text-white">
         {companionImage && (
             <Image
                 src={companionImage.imageUrl}
                 alt={companionImage.description}
                 data-ai-hint={companionImage.imageHint}
-                width={360}
-                height={180}
-                className="w-full h-44 object-cover rounded-lg mb-3"
+                width={380}
+                height={190}
+                className="w-full h-[190px] object-cover rounded-xl mb-3"
             />
         )}
-        <h3 className="text-xl font-bold font-headline">Empathetic AI Companion</h3>
-        <p className="text-sm text-gray-400 mb-3">Talk to a supportive AI that listens and understands.</p>
+        <h3 className="text-xl font-bold font-headline mt-3">Empathetic AI Companion</h3>
+        <p className="text-sm text-gray-400 mb-3">Talk to an AI that listens, remembers, and responds like ChatGPT.</p>
         
-        <div ref={chatBoxRef} className="mt-3 h-56 overflow-y-auto bg-[#020617] p-2.5 rounded-lg flex flex-col gap-2">
-            {messages.length === 0 && (
+        <div ref={chatBoxRef} className="mt-3 h-64 overflow-y-auto bg-[#020617] p-2.5 rounded-xl flex flex-col gap-2">
+            {messages.length === 0 && !isLoading && (
                 <div className="flex justify-center items-center h-full">
-                    <p className="text-gray-500">Tell me how you feel...</p>
+                    <p className="text-gray-500">Share what’s on your mind…</p>
                 </div>
             )}
-            {messages.map((message) => (
+            {messages.map((message, index) => (
               <div
-                key={message.id}
+                key={index}
                 className={cn(
-                  'p-2 rounded-lg max-w-[90%] text-sm flex items-start gap-2',
-                  message.sender === 'user' ? 'bg-[#2563eb] self-end' : 'bg-[#334155] self-start'
+                  'p-2 px-2.5 rounded-lg max-w-[90%] text-sm whitespace-pre-wrap',
+                  message.role === 'user' ? 'bg-[#2563eb] self-end' : 'bg-[#334155] self-start'
                 )}
               >
-                  <p className="whitespace-pre-wrap">{message.text}</p>
+                  <p>{message.text}</p>
               </div>
             ))}
              {isLoading && (
-              <div className="bg-[#334155] self-start p-2 rounded-lg flex items-center space-x-2">
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  <span className="text-sm text-gray-300">Thinking...</span>
+              <div className="bg-[#334155] self-start p-2 px-2.5 rounded-lg flex items-center space-x-2">
+                  <span className="text-sm text-gray-300">Typing…</span>
               </div>
             )}
         </div>
         
-        <form onSubmit={handleSendMessage} className="flex w-full items-center space-x-2 mt-2">
+        <form onSubmit={handleSendMessage} className="flex flex-col w-full mt-2">
           <Input
             id="userInput"
-            placeholder="Tell me how you feel..."
-            className="flex-1 bg-white text-black border-none"
+            placeholder="Share what’s on your mind…"
+            className="flex-1 bg-white text-black border-none rounded-lg p-2.5"
             autoComplete="off"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             disabled={isLoading}
           />
-          <Button type="submit" size="default" disabled={isLoading || !input.trim()} className="bg-[#38bdf8] hover:bg-[#0ea5e9] font-bold">
-            <Send className="h-4 w-4 mr-2" />
+          <Button type="submit" size="lg" disabled={isLoading || !input.trim()} className="bg-[#38bdf8] hover:bg-[#0ea5e9] font-bold mt-2 rounded-lg text-base">
             Send
           </Button>
         </form>
