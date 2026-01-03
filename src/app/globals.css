@@ -43,38 +43,38 @@ body {
     --sidebar-ring: 203 71% 45%;
   }
   .dark {
-    --background: 222 47% 11%;
-    --foreground: 210 40% 98%;
-    --card: 222 47% 15%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222 47% 11%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 203 71% 65%;
-    --primary-foreground: 222 47% 11%;
-    --secondary: 217 33% 25%;
+    --background: 224 71% 4%; /* #0f172a */
+    --foreground: 220 13% 91%; /* #e5e7eb */
+    --card: 222 47% 11%; /* #111827 */
+    --card-foreground: 220 13% 91%;
+    --popover: 224 71% 4%;
+    --popover-foreground: 220 13% 91%;
+    --primary: 203 92% 54%; /* #38bdf8 */
+    --primary-foreground: 224 71% 4%;
+    --secondary: 215 28% 17%;
     --secondary-foreground: 210 40% 98%;
-    --muted: 217 33% 17%;
-    --muted-foreground: 215 20% 65%;
-    --accent: 259 100% 87%;
-    --accent-foreground: 259 47% 11%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217 20% 27%;
-    --input: 217 20% 27%;
-    --ring: 203 71% 65%;
-    --chart-1: 203 71% 65%;
+    --muted: 222 47% 11%;
+    --muted-foreground: 217 19% 64%; /* #94a3b8 */
+    --accent: 215 28% 17%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 215 28% 17%;
+    --input: 215 28% 17%;
+    --ring: 203 92% 54%;
+    --chart-1: 203 92% 54%;
     --chart-2: 259 100% 87%;
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
-    --sidebar-background: 222 47% 13%;
-    --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 203 71% 65%;
-    --sidebar-primary-foreground: 222 47% 11%;
-    --sidebar-accent: 222 47% 18%;
+    --sidebar-background: 224 71% 4%;
+    --sidebar-foreground: 220 13% 91%;
+    --sidebar-primary: 203 92% 54%;
+    --sidebar-primary-foreground: 224 71% 4%;
+    --sidebar-accent: 222 47% 11%;
     --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 217 20% 27%;
-    --sidebar-ring: 203 71% 65%;
+    --sidebar-border: 215 28% 17%;
+    --sidebar-ring: 203 92% 54%;
   }
   .split {
     --background: 0 0% 100%;
