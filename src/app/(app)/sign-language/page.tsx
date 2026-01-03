@@ -14,7 +14,7 @@ const SignLanguageClient = dynamic(
           <Skeleton className="h-10 w-32 mt-4" />
         </div>
         <div>
-          <Skeleton className="h-[340px] w-full" />
+          <Skeleton className="h-[400px] w-full" />
         </div>
       </div>
     ),
